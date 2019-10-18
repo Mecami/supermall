@@ -9,7 +9,11 @@
         <!-- 推荐部分 -->
         <recommend :recommends="recommends"></recommend>
         <!-- 本周流行 -->
-        <feature />
+        <feature-view />
+        <!-- 选项栏部分 -->
+        <tab-control @getGoodsType="getType" class="tabbar-control" :titles="['流行','新款','精选']"></tab-control>
+        <!-- 商品列表 -->
+        <goods-list :goods-list="goods[goodsType].list" />> 
         <ul>
             <li>列表1</li>
             <li>列表2</li>
@@ -116,30 +120,67 @@
 </template>
 
 <script>
-import NavBar from 'components/common/navbar/NavBar'
+//导入子组件
 import HomeSwiper from './childComps/HomeSwiper'
 import Recommend from './childComps/RecommendView'
-import Feature from './childComps/Feature'
-import {getHomeMultidata} from 'network/home'
+import FeatureView from './childComps/Feature'
+//导入公共组件
+import NavBar from 'components/common/navbar/NavBar'
+import TabControl from 'components/content/tabControl/TabControl'
+import GoodsList from 'components/content/goods/GoodsList'
+//导入用到的方法
+import {getHomeMultidata, getHomeGoods} from 'network/home'
 
 export default {
+    name: 'Home',
     data(){
         return {
             banners: [],
-            recommends: []
+            recommends: [],
+            goods: {
+                pop: {page: 0, list: []},
+                new: {page: 0, list: []},
+                sell: {page: 0, list: []},
+            },
+            goodsType: "pop",
+            goodsTypes: ['pop','new','sell']
         }
     },
     components :{
-        NavBar,
         HomeSwiper,
         Recommend,
-        Feature
+        FeatureView,
+        NavBar,
+        TabControl,
+        GoodsList
     },
-    created() {
-        getHomeMultidata().then(res =>{
+    methods: {
+        getHomeMultidata() {
+            getHomeMultidata().then(res =>{
             this.banners = res.data.banner.list
             this.recommends = res.data.recommend.list
         })
+        },
+        getHomeGoods(type){
+            const page = this.goods[type].page + 1
+            getHomeGoods(type, page).then(res => {
+                this.goods[type].list.push(...res.data.list)
+                this.goods[type].page ++
+            })
+        },
+        getType(index){
+            this.goodsType = this.goodsTypes[index];
+     
+        }
+    },
+    
+    created() {
+        //请求轮播图和推荐商品的数据
+        this.getHomeMultidata();
+        //请求商品列表
+        this.getHomeGoods('pop')
+        this.getHomeGoods('new')
+        this.getHomeGoods('sell')
     },
     
 }
@@ -160,5 +201,10 @@ export default {
     }
     .center {
         color: #fff;
+    }
+
+    .tabbar-control {
+        position: sticky;
+        top: 44px;
     }
 </style>
