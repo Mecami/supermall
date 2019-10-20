@@ -5,7 +5,13 @@
       <div slot="center" class="center">购物街</div>
     </nav-bar>
 
-    <scroll class="wrapper">
+    <scroll class="wrapper"  
+            ref="scroll"
+            :probe-type="3"  
+            :pull-up-load="true"
+            @scroll="contentScroll"
+            @loadMore="loadMore"
+            >
       <!-- 轮播图部分 -->
       <home-swiper :banners="banners" />
       <!-- 推荐部分 -->
@@ -17,7 +23,8 @@
       <!-- 商品列表 -->
       <goods-list :goods-list="showGoods" />
     </scroll>
-
+     
+    <back-top @click.native="backTop" v-show="isShowBackTop"/>
 
   </div>
 </template>
@@ -29,9 +36,11 @@
   import FeatureView from './childComps/Feature'
   //导入公共组件
   import NavBar from 'components/common/navbar/NavBar'
+  import Scroll from 'components/common/scroll/Scroll'
+
   import TabControl from 'components/content/tabControl/TabControl'
   import GoodsList from 'components/content/goods/GoodsList'
-  import Scroll from 'components/common/scroll/Scroll'
+  import BackTop from 'components/content/backTop/BackTop'
   //导入用到的方法
   import {
     getHomeMultidata,
@@ -59,7 +68,8 @@
           },
         },
         currentType: "pop",
-        goodsTypes: ['pop', 'new', 'sell']
+        goodsTypes: ['pop', 'new', 'sell'],
+        isShowBackTop: false
       }
     },
     components: {
@@ -69,7 +79,8 @@
       NavBar,
       TabControl,
       GoodsList,
-      Scroll
+      Scroll,
+      BackTop
     },
     computed: {
       showGoods() {
@@ -81,6 +92,20 @@
       getType(index) {
         this.currentType = this.goodsTypes[index];
 
+      },
+      backTop() {
+          this.$refs.scroll.scrollTo(0, 0)
+         
+      },
+      contentScroll(position) {
+        this.isShowBackTop = (-position.y) > 1000
+        
+      },
+      loadMore(){
+         
+        this.getHomeGoods(this.currentType)
+         
+         
       },
       //网络请求相关方法
       getHomeMultidata() {
@@ -94,6 +119,11 @@
         getHomeGoods(type, page).then(res => {
           this.goods[type].list.push(...res.data.list)
           this.goods[type].page++
+          //数据加载更多后，刷新可滚动的高度
+          this.$refs.scroll.scroll.refresh()
+          //加载完成后调用BScroll中的finishPullUp方法，才可以进行下一次的加载
+          this.$refs.scroll.finishPullUp()
+
         })
       }
 
