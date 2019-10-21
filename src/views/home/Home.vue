@@ -88,6 +88,16 @@
       }
     },
     methods: {
+      //防抖函数
+      debounce(func, delay) {
+        let timer = null
+        return function(){
+          if(timer) clearTimeout(timer)
+          timer = setTimeout(() => {
+            func()
+          }, delay);
+        }
+      },
       //事件监听相关方法
       getType(index) {
         this.currentType = this.goodsTypes[index];
@@ -120,8 +130,8 @@
           this.goods[type].list.push(...res.data.list)
           this.goods[type].page++
           //数据加载更多后，刷新可滚动的高度
-          this.$refs.scroll.scroll.refresh()
-          //加载完成后调用BScroll中的finishPullUp方法，才可以进行下一次的加载
+          // this.$refs.scroll.scroll.refresh()
+          // //加载完成后调用BScroll中的finishPullUp方法，才可以进行下一次的加载
           this.$refs.scroll.finishPullUp()
 
         })
@@ -136,6 +146,15 @@
       this.getHomeGoods('pop')
       this.getHomeGoods('new')
       this.getHomeGoods('sell')
+
+     
+    },
+    mounted() {
+      const refresh = this.debounce(this.$refs.scroll.refresh,50)
+      this.$bus.$on('itemImageLoadFinish', () => {
+         refresh()
+        
+      })
     },
 
   }

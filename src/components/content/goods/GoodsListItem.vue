@@ -1,11 +1,11 @@
 <template>
     <div class="goods-item">
-        <img :src="goodsItem.show.img" alt="">
+        <img :src="goodsItem.show.img" @load="itemImageLoad">
         <div class="goods-item-info">
             <p class="title">{{goodsItem.title}}</p>
             <div class="num">
                 <span class="price">￥{{parseInt(goodsItem.price)}}</span>
-                <img src="~assets/img/common/favor.png" alt="">
+                <img src="~assets/img/common/favor.png" >
                 <span class="cfav">{{goodsItem.cfav}}</span>
             </div>
         </div>
@@ -20,6 +20,12 @@ export default {
             default() {
                 return {}
             }
+        }
+    },
+    methods: {
+        itemImageLoad() {
+            // console.log('2222')
+            this.$bus.$emit('itemImageLoadFinish')
         }
     }
 }
