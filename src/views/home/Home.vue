@@ -4,6 +4,13 @@
     <nav-bar class="home-nav">
       <div slot="center" class="center">购物街</div>
     </nav-bar>
+     <tab-control 
+          v-show="isShowTabControl"
+          @getGoodsType="getGoodsType" 
+          ref="tabControl1"
+          class="tabbarControl" 
+          :titles="['流行','新款','精选']">
+      </tab-control>
 
     <scroll class="wrapper"  
             ref="scroll"
@@ -13,13 +20,18 @@
             @loadMore="loadMore"
             >
       <!-- 轮播图部分 -->
-      <home-swiper :banners="banners" />
+      <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad"/>
       <!-- 推荐部分 -->
       <recommend :recommends="recommends"></recommend>
       <!-- 本周流行 -->
       <feature-view />
       <!-- 选项栏部分 -->
-      <tab-control @getGoodsType="getType" class="tabbar-control" :titles="['流行','新款','精选']"></tab-control>
+      <tab-control 
+          ref="tabControl2"
+          @getGoodsType="getGoodsType" 
+           
+          :titles="['流行','新款','精选']">
+      </tab-control>
       <!-- 商品列表 -->
       <goods-list :goods-list="showGoods" />
     </scroll>
@@ -46,6 +58,7 @@
     getHomeMultidata,
     getHomeGoods
   } from 'network/home'
+  import {debounce} from 'common/utils'
 
   export default {
     name: 'Home',
@@ -69,7 +82,11 @@
         },
         currentType: "pop",
         goodsTypes: ['pop', 'new', 'sell'],
-        isShowBackTop: false
+        isShowBackTop: false,
+        tabOffsetTop: 0,
+        isShowTabControl: false,
+        saveY: 0
+         
       }
     },
     components: {
@@ -88,34 +105,38 @@
       }
     },
     methods: {
-      //防抖函数
-      debounce(func, delay) {
-        let timer = null
-        return function(){
-          if(timer) clearTimeout(timer)
-          timer = setTimeout(() => {
-            func()
-          }, delay);
-        }
-      },
+     
       //事件监听相关方法
-      getType(index) {
+      getGoodsType(index) {
         this.currentType = this.goodsTypes[index];
-
+        this.$refs.tabControl1.currentIndex = index
+        this.$refs.tabControl2.currentIndex = index
       },
       backTop() {
           this.$refs.scroll.scrollTo(0, 0)
          
       },
       contentScroll(position) {
+        //监听是否显示“返回顶部”
         this.isShowBackTop = (-position.y) > 1000
+        //监听tabbarControl是否需要固定定位
+        this.isShowTabControl = (-position.y) > this.tabOffsetTop
+
+        
         
       },
-      loadMore(){
+      loadMore() {
          
         this.getHomeGoods(this.currentType)
          
          
+      },
+      swiperImageLoad() {
+        // console.log('22')
+        this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop
+        console.log( this.$refs.tabControl2)
+        // console.log(this.$refs.tabControl2.$el.offsetTop)
+        // console.log(this.$refs.tabControl.$el.offsetTop)
       },
       //网络请求相关方法
       getHomeMultidata() {
@@ -150,12 +171,19 @@
      
     },
     mounted() {
-      const refresh = this.debounce(this.$refs.scroll.refresh,50)
+      const refresh = debounce(this.$refs.scroll.refresh,50)
       this.$bus.$on('itemImageLoadFinish', () => {
          refresh()
         
       })
     },
+    activated () {
+      this.$refs.scroll.scrollTo(0, this.saveY, 0)
+      this.$refs.scroll.refresh()
+    },
+    deactivated () {
+      this.saveY = this.$refs.scroll.getScrollY()
+    }
 
   }
 </script>
@@ -169,11 +197,11 @@
 
   .home-nav {
     background-color: rgb(248, 130, 159);
-    position: fixed;
+    /* position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 10;
+    z-index: 10; */
     /* box-shadow: 0 1px 1px rgba(10, 10, 10 , .3) */
   }
 
@@ -181,13 +209,14 @@
     color: #fff;
   }
 
-  .tabbar-control {
-    position: sticky;
-    top: 44px;
+  .tabbarControl {
+    position: relative;
+    top: -1px;
+    z-index: 10; 
   }
 
   .wrapper {
-      
+      overflow: hidden;
       position: absolute;
       top: 44px;
       bottom: 49px;

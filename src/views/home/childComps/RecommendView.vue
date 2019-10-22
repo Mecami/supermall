@@ -24,6 +24,7 @@ export default {
 
 <style scoped>
     .recommend {
+        background-color: #fff;
         display: flex;
         text-align: center;
         padding: 13px 0 20px;
