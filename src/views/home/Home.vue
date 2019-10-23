@@ -134,7 +134,7 @@
       swiperImageLoad() {
         // console.log('22')
         this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop
-        console.log( this.$refs.tabControl2)
+        // console.log( this.$refs.tabControl2)
         // console.log(this.$refs.tabControl2.$el.offsetTop)
         // console.log(this.$refs.tabControl.$el.offsetTop)
       },
@@ -178,11 +178,15 @@
       })
     },
     activated () {
+      // console.log(this.saveY)
       this.$refs.scroll.scrollTo(0, this.saveY, 0)
       this.$refs.scroll.refresh()
     },
     deactivated () {
       this.saveY = this.$refs.scroll.getScrollY()
+      
+      // console.log(this.$refs.scroll.getScrollY())
+      // console.log(this.saveY)
     }
 
   }

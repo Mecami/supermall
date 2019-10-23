@@ -28,13 +28,8 @@ export default {
             this.$bus.$emit('itemImageLoadFinish')
         },
         itemClick() {
-            this.$router.push('/detail/'+this.goodsItem.iid+'/jack')
-            // this.$router.push({
-            //     path: '/detail',
-            //     query: {
-            //         iid: this.goodsItem.iid
-            //     }
-            // })
+            this.$router.push('/detail/'+this.goodsItem.iid)
+          
         }
     }
 }
