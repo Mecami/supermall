@@ -30,7 +30,8 @@ export default {
     },
     methods: {
         backClick() {
-            this.$router.go(-1)
+            //这里用go(-1) 会出问题，不会记录原来的位置！！！
+            this.$router.back()
         },
         titleClick(index) {
             this.currentIndex = index

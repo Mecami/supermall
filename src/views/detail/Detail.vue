@@ -2,45 +2,55 @@
   <div id="detail">
       <!-- 顶部导航栏 -->
       <detail-nav-bar />
-      <!-- 轮播图 -->
-      <detail-swiper :topImages="topImages"/>
-      <!-- 商品信息 -->
-      <detail-base-info :goods="goods"/>
+      <scroll class="detail-wrapper">
+        <!-- 轮播图 -->
+        <detail-swiper :topImages="topImages"/>
+        <!-- 商品信息 -->
+        <detail-base-info :goods="goods"/>
+        <!-- 店铺信息 -->
+        <detail-shop-info :shop="shop"/>
+      </scroll>
   </div>
 </template>
 
 <script>
 //导入子组件
 import DetailNavBar from './childComps/DetailNavBar'
-import DetailBaseInfo from './childComps/DetailBaseInfo'
-//导入公共组件
 import DetailSwiper from './childComps/DetailSwiper'
+import DetailBaseInfo from './childComps/DetailBaseInfo'
+import DetailShopInfo from './childComps/DetailShopInfo'
+//导入公共组件
+import Scroll from 'components/common/scroll/Scroll'
 //导入函数
-import {getDetail, Goods} from 'network/detail'
+import {getDetail, Goods, Shop} from 'network/detail'
 export default {
     name: 'Detail',
     data() {
         return {
             iid: null,
             topImages: [],
-            goods: {}
+            goods: {},
+            shop: {}
         }
     },
     components: {
         DetailNavBar,
         DetailBaseInfo,
-        DetailSwiper
+        DetailSwiper,
+        DetailShopInfo,
+        Scroll
     },
     methods: {
         getDetail(){
             getDetail(this.iid).then(res => {
                 console.log(res)
                 const data = res.result
-                //保存轮播图数据
+                //获取轮播图数据
                 this.topImages = data.itemInfo.topImages
-                //保存商品数据
+                //获取商品数据
                 this.goods = new Goods(data.itemInfo, data.shopInfo, data.columns)
-
+                //获取店铺数据
+                this.shop = new Shop(data.shopInfo)
             })
         }
     },
@@ -60,5 +70,15 @@ export default {
 </script>
 
 <style scoped>
-
+    #detail {
+        height: 100vh;
+    }
+    .detail-wrapper {
+        /* 注意calc中的符号左右两边要有空格 */
+        height: calc(100% - 44px);
+        position: relative;
+        z-index: 11;
+        overflow: hidden;
+        background-color: #fff;
+    }
 </style>
