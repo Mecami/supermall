@@ -27,7 +27,7 @@
       <div class="go-shop">
           <span>进店逛逛</span>
       </div>
-      <div class="ppp"></div>
+       
 
       
   </div>
@@ -56,11 +56,11 @@ export default {
 </script>
 
 <style scoped>
-    .ppp {
-        height: 80px;
-    }
+    
     .shop-info {
          border-top: 5px solid #ddd;
+         padding-bottom: 40px;
+         border-bottom: 5px solid #ddd;
          
     }
     .shop-name {
@@ -85,7 +85,7 @@ export default {
     .shop-msg {
         padding: 0 10px;
         display: flex;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
     }
     .shop-msg h3 {
         margin-bottom: 13px;

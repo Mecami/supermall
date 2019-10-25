@@ -2,13 +2,15 @@
   <div id="detail">
       <!-- 顶部导航栏 -->
       <detail-nav-bar />
-      <scroll class="detail-wrapper">
+      <scroll class="detail-wrapper" ref="scroll">
         <!-- 轮播图 -->
         <detail-swiper :topImages="topImages"/>
         <!-- 商品信息 -->
         <detail-base-info :goods="goods"/>
         <!-- 店铺信息 -->
         <detail-shop-info :shop="shop"/>
+        <!-- 商品详细详细 -->
+        <detail-goods-info :detail-info="detailInfo"/>
       </scroll>
   </div>
 </template>
@@ -19,6 +21,7 @@ import DetailNavBar from './childComps/DetailNavBar'
 import DetailSwiper from './childComps/DetailSwiper'
 import DetailBaseInfo from './childComps/DetailBaseInfo'
 import DetailShopInfo from './childComps/DetailShopInfo'
+import DetailGoodsInfo from './childComps/DetailGoodsInfo'
 //导入公共组件
 import Scroll from 'components/common/scroll/Scroll'
 //导入函数
@@ -30,7 +33,8 @@ export default {
             iid: null,
             topImages: [],
             goods: {},
-            shop: {}
+            shop: {},
+            detailInfo: {}
         }
     },
     components: {
@@ -38,6 +42,7 @@ export default {
         DetailBaseInfo,
         DetailSwiper,
         DetailShopInfo,
+        DetailGoodsInfo,
         Scroll
     },
     methods: {
@@ -51,7 +56,12 @@ export default {
                 this.goods = new Goods(data.itemInfo, data.shopInfo, data.columns)
                 //获取店铺数据
                 this.shop = new Shop(data.shopInfo)
+                //获取商品详情数据
+                this.detailInfo = data.detailInfo
             })
+        },
+        imageLoad() {
+            this.$refs.scroll.refresh()
         }
     },
     created() {
