@@ -4,6 +4,7 @@
           <div slot="left" class="back" @click="backClick">
               <img src="~assets/img/common/back.svg" alt="">
           </div>
+
           <div slot="center" class="titles">
               <div v-for="(item, index) in titles" :key="index" 
                     class="titles-item"
@@ -35,6 +36,7 @@ export default {
         },
         titleClick(index) {
             this.currentIndex = index
+            this.$emit('titleTypeClick', index)
         }
     }
 

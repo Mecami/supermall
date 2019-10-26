@@ -1,5 +1,6 @@
 <template>
   <div class="detail-info" v-if="Object.keys(detailInfo).length !== 0">
+      
       <div class="detail-top">
           <div class="icon-start">
               <div class="icon-dot"></div>
@@ -55,8 +56,11 @@ export default {
 </script>
 
 <style scoped>
+   
     .detail-info {
-        padding: 0 4px;
+        padding: 0 4px 20px 4px;
+       
+        border-bottom: 5px solid #ddd;
     }
     .detail-top {
         padding: 20px;
@@ -82,12 +86,12 @@ export default {
         width: 100%;
     }
     .icon-dot {
-        width: 6px;
-        height: 6px;
+        width: 8px;
+        height: 8px;
         background-color: #000;
     }
     .icon-line {
-        width: 130px;
+        width: 100px;
         height: 1px;
         background-color: #222;
     }

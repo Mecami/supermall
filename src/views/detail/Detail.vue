@@ -1,16 +1,19 @@
 <template>
   <div id="detail">
       <!-- 顶部导航栏 -->
-      <detail-nav-bar />
-      <scroll class="detail-wrapper" ref="scroll">
+      <detail-nav-bar @titleTypeClick="titleTypeClick"/>
+
+      <scroll class="detail-wrapper" ref="scroll" @scroll="scroll">
         <!-- 轮播图 -->
         <detail-swiper :topImages="topImages"/>
         <!-- 商品信息 -->
         <detail-base-info :goods="goods"/>
         <!-- 店铺信息 -->
         <detail-shop-info :shop="shop"/>
-        <!-- 商品详细详细 -->
+        <!-- 商品详细信息 -->
         <detail-goods-info :detail-info="detailInfo"/>
+        <!-- 商品参数信息 -->
+        <detail-param-info :param-info="paramInfo" ref="detailParamInfo"/>
       </scroll>
   </div>
 </template>
@@ -22,10 +25,11 @@ import DetailSwiper from './childComps/DetailSwiper'
 import DetailBaseInfo from './childComps/DetailBaseInfo'
 import DetailShopInfo from './childComps/DetailShopInfo'
 import DetailGoodsInfo from './childComps/DetailGoodsInfo'
+import DetailParamInfo from './childComps/DetailParamInfo'
 //导入公共组件
 import Scroll from 'components/common/scroll/Scroll'
 //导入函数
-import {getDetail, Goods, Shop} from 'network/detail'
+import {getDetail, Goods, Shop, GoodsParam} from 'network/detail'
 export default {
     name: 'Detail',
     data() {
@@ -34,18 +38,22 @@ export default {
             topImages: [],
             goods: {},
             shop: {},
-            detailInfo: {}
+            detailInfo: {},
+            paramInfo: {},
+            detailParamInfoY: 0
         }
     },
     components: {
         DetailNavBar,
-        DetailBaseInfo,
         DetailSwiper,
+        DetailBaseInfo,
         DetailShopInfo,
         DetailGoodsInfo,
+        DetailParamInfo,
         Scroll
     },
     methods: {
+        //网络请求函数
         getDetail(){
             getDetail(this.iid).then(res => {
                 console.log(res)
@@ -58,10 +66,37 @@ export default {
                 this.shop = new Shop(data.shopInfo)
                 //获取商品详情数据
                 this.detailInfo = data.detailInfo
+                //获取商品参数数据
+                this.paramInfo = new GoodsParam(data.itemParams.info,data.itemParams.rule)
             })
         },
+        //事件监听函数
         imageLoad() {
             this.$refs.scroll.refresh()
+        },
+        titleTypeClick(index) {
+            this.$refs.scroll.refresh()
+
+            switch (index) {
+                case 0:
+                    
+                    this.$refs.scroll.scrollTo(0, 0, 1000);
+                    console.log('00')
+                    break;
+                case 1:
+                    //获取对应的组件距离顶部的高度
+                    this.detailParamInfoY = this.$refs.detailParamInfo.$el.offsetTop;
+                    console.log(scrollTop);
+                    this.$refs.scroll.scrollTo(0, -detailParamInfoY, 1000);
+                    console.log('11')
+                    break;
+            
+                 
+            }
+            // this.$refs.scroll.scrollTo(0, -1000, 500)
+        },
+        scroll() {
+
         }
     },
     created() {
@@ -69,6 +104,7 @@ export default {
         this.iid = this.$route.params.iid
         //获取轮播图等其他数据
         this.getDetail()
+        //获取
          
       
     },
