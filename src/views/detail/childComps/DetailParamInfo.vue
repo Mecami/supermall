@@ -44,7 +44,7 @@ export default {
 
 <style scoped>
     .param-info {
-        padding: 10px 12px;
+        padding: 10px 12px 25px 12px;
         border-bottom: 5px solid #ddd;
     }
     .sizes {

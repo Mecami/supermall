@@ -14,6 +14,10 @@
         <detail-goods-info :detail-info="detailInfo"/>
         <!-- 商品参数信息 -->
         <detail-param-info :param-info="paramInfo" ref="detailParamInfo"/>
+        <!-- 商品评论信息 -->
+        <detail-comment-info :comment-info="commentInfo" />
+        <!-- 相关推荐 -->
+        <goods-list :goods-list="recommends"/>
       </scroll>
   </div>
 </template>
@@ -26,10 +30,12 @@ import DetailBaseInfo from './childComps/DetailBaseInfo'
 import DetailShopInfo from './childComps/DetailShopInfo'
 import DetailGoodsInfo from './childComps/DetailGoodsInfo'
 import DetailParamInfo from './childComps/DetailParamInfo'
+import DetailCommentInfo from './childComps/DetailCommentInfo'
 //导入公共组件
 import Scroll from 'components/common/scroll/Scroll'
+import GoodsList from 'components/content/goods/GoodsList'
 //导入函数
-import {getDetail, Goods, Shop, GoodsParam} from 'network/detail'
+import {getDetail,getRecommend, Goods, Shop, GoodsParam} from 'network/detail'
 export default {
     name: 'Detail',
     data() {
@@ -40,6 +46,8 @@ export default {
             shop: {},
             detailInfo: {},
             paramInfo: {},
+            commentInfo: {},
+            recommends: [],
             detailParamInfoY: 0
         }
     },
@@ -50,11 +58,13 @@ export default {
         DetailShopInfo,
         DetailGoodsInfo,
         DetailParamInfo,
-        Scroll
+        DetailCommentInfo,
+        Scroll,
+        GoodsList
     },
     methods: {
         //网络请求函数
-        getDetail(){
+        _getDetail() {
             getDetail(this.iid).then(res => {
                 console.log(res)
                 const data = res.result
@@ -68,6 +78,15 @@ export default {
                 this.detailInfo = data.detailInfo
                 //获取商品参数数据
                 this.paramInfo = new GoodsParam(data.itemParams.info,data.itemParams.rule)
+                //获取评论数据
+                if(data.rate.cRate !== 0) {
+                    this.commentInfo = data.rate.list[0]
+                }
+            })
+        },
+        _getRecommend() {
+            getRecommend().then(res => {
+                this.recommends = res.data.list
             })
         },
         //事件监听函数
@@ -103,9 +122,9 @@ export default {
         //从route中获取商品的id
         this.iid = this.$route.params.iid
         //获取轮播图等其他数据
-        this.getDetail()
-        //获取
-         
+        this._getDetail()
+        //获取商品推荐数据
+        this._getRecommend()
       
     },
     activated () {
