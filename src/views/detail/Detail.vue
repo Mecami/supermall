@@ -11,13 +11,13 @@
         <!-- 店铺信息 -->
         <detail-shop-info :shop="shop"/>
         <!-- 商品详细信息 -->
-        <detail-goods-info :detail-info="detailInfo"/>
+        <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad"/>
         <!-- 商品参数信息 -->
-        <detail-param-info :param-info="paramInfo" ref="detailParamInfo"/>
+        <detail-param-info ref="param" :param-info="paramInfo" />
         <!-- 商品评论信息 -->
-        <detail-comment-info :comment-info="commentInfo" />
+        <detail-comment-info ref="comment" :comment-info="commentInfo" />
         <!-- 相关推荐 -->
-        <goods-list :goods-list="recommends"/>
+        <goods-list ref="recommend" :goods-list="recommends"/>
       </scroll>
   </div>
 </template>
@@ -36,6 +36,11 @@ import Scroll from 'components/common/scroll/Scroll'
 import GoodsList from 'components/content/goods/GoodsList'
 //导入函数
 import {getDetail,getRecommend, Goods, Shop, GoodsParam} from 'network/detail'
+//导入防抖函数
+import {debounce} from 'common/utils'
+//导入混入文件
+import {itemListenerMixin} from 'common/mixin'
+
 export default {
     name: 'Detail',
     data() {
@@ -48,7 +53,9 @@ export default {
             paramInfo: {},
             commentInfo: {},
             recommends: [],
-            detailParamInfoY: 0
+            themeTopYs: [],
+            getThemeTopYs: null
+             
         }
     },
     components: {
@@ -62,6 +69,7 @@ export default {
         Scroll,
         GoodsList
     },
+    mixins: [itemListenerMixin],
     methods: {
         //网络请求函数
         _getDetail() {
@@ -89,30 +97,18 @@ export default {
                 this.recommends = res.data.list
             })
         },
-        //事件监听函数
+        //监听GoodsInfo中图片的加载，加载完成后只刷新一次
         imageLoad() {
-            this.$refs.scroll.refresh()
+            //方式1：获取图片的个数，每加载1张就累加，直到个数等于图片的总个数，才发射函数
+            // console.log('GoodsInfo中的刷新')
+            // this.$refs.scroll.refresh()
+            //方式2：调用防抖处理过的refresh函数
+            this.refresh()
+            this.getThemeTopYs()
         },
         titleTypeClick(index) {
-            this.$refs.scroll.refresh()
-
-            switch (index) {
-                case 0:
-                    
-                    this.$refs.scroll.scrollTo(0, 0, 1000);
-                    console.log('00')
-                    break;
-                case 1:
-                    //获取对应的组件距离顶部的高度
-                    this.detailParamInfoY = this.$refs.detailParamInfo.$el.offsetTop;
-                    console.log(scrollTop);
-                    this.$refs.scroll.scrollTo(0, -detailParamInfoY, 1000);
-                    console.log('11')
-                    break;
-            
-                 
-            }
-            // this.$refs.scroll.scrollTo(0, -1000, 500)
+        
+            this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 500)
         },
         scroll() {
 
@@ -125,7 +121,21 @@ export default {
         this._getDetail()
         //获取商品推荐数据
         this._getRecommend()
+        //组件创建完就获得一个防抖处理过的获取titles对应的offsetTop的函数
+        this.getThemeTopYs = debounce(() => {
+            this.themeTopYs = []
+            this.themeTopYs.push(0)
+            this.themeTopYs.push(this.$refs.param.$el.offsetTop)
+            this.themeTopYs.push(this.$refs.comment.$el.offsetTop)
+            this.themeTopYs.push(this.$refs.recommend.$el.offsetTop)
+            console.log(this.themeTopYs)
+        }, 100)
+
+        
       
+    },
+    mounted() {
+   
     },
     activated () {
         

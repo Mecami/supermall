@@ -24,11 +24,24 @@ export default {
     },
     methods: {
         itemImageLoad() {
+            //之前的方法:只会刷新home组件中的可滚动区域，不可行,detail中刷不了
+            this.$bus.$emit('homeItemImageLoadFinish')
+
             // console.log('2222')
-            this.$bus.$emit('itemImageLoadFinish')
+            //方法1：根据当前路由发出对应的事件总线
+            // if(this.$route.path.indexOf('/home') !== -1) {
+                
+            //     this.$bus.$emit('homeItemImageLoadFinish')
+
+            // } else if (this.$route.path.indexOf('/detail') !== -1) {
+            //     this.$bus.$emit('detailItemImageLoadFinish')
+
+            // }
+            //方法2：用混入的方法
+
         },
         itemClick() {
-            this.$router.push('/detail/'+this.goodsItem.iid)
+            this.$router.push('/detail/' + this.goodsItem.iid)
           
         }
     },

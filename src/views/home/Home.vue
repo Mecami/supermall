@@ -58,7 +58,10 @@
     getHomeMultidata,
     getHomeGoods
   } from 'network/home'
+  //导入防抖动函数
   import {debounce} from 'common/utils'
+  //导入混入文件
+  import {itemListenerMixin} from 'common/mixin'
 
   export default {
     name: 'Home',
@@ -85,6 +88,7 @@
         isShowBackTop: false,
         tabOffsetTop: 0,
         isShowTabControl: false,
+        
         saveY: 0
          
       }
@@ -99,6 +103,7 @@
       Scroll,
       BackTop
     },
+    mixins: [itemListenerMixin],
     computed: {
       showGoods() {
         return this.goods[this.currentType].list
@@ -171,11 +176,7 @@
      
     },
     mounted() {
-      const refresh = debounce(this.$refs.scroll.refresh,50)
-      this.$bus.$on('itemImageLoadFinish', () => {
-         refresh()
-        
-      })
+     
     },
     activated () {
       // console.log(this.saveY)
@@ -185,6 +186,9 @@
     },
     deactivated () {
       this.saveY = this.$refs.scroll.getScrollY()
+      //隐藏起来后取消图片事件总线的监听
+      //$bus.$off第1个参数是事件总线的名称，第二个是具体的函数名
+      this.$bus.$off('homeItemImageLoadFinish', this.refresh)
       // console.log(this.saveY)
       // console.log(this.$refs.scroll.getScrollY())
       // console.log(this.saveY)
