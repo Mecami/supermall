@@ -17,7 +17,7 @@ export default {
     props: {
         probeType: {
             type: Number,
-            default: 0
+            default: 0 //默认不监听滚动
         },
         pullUpLoad: {
             type: Boolean,

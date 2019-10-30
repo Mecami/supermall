@@ -1,9 +1,12 @@
 <template>
   <div id="detail">
       <!-- 顶部导航栏 -->
-      <detail-nav-bar @titleTypeClick="titleTypeClick"/>
+      <detail-nav-bar @titleTypeClick="titleTypeClick" ref="navBar"/>
 
-      <scroll class="detail-wrapper" ref="scroll" @scroll="scroll">
+      <scroll class="detail-wrapper" 
+              ref="scroll"
+              :probe-type="3" 
+              @scroll="contentScroll">
         <!-- 轮播图 -->
         <detail-swiper :topImages="topImages"/>
         <!-- 商品信息 -->
@@ -19,6 +22,9 @@
         <!-- 相关推荐 -->
         <goods-list ref="recommend" :goods-list="recommends"/>
       </scroll>
+
+      <!-- 底部导航栏 -->
+      <detail-bottom-bar />
   </div>
 </template>
 
@@ -31,6 +37,7 @@ import DetailShopInfo from './childComps/DetailShopInfo'
 import DetailGoodsInfo from './childComps/DetailGoodsInfo'
 import DetailParamInfo from './childComps/DetailParamInfo'
 import DetailCommentInfo from './childComps/DetailCommentInfo'
+import DetailBottomBar from './childComps/DetailBottomBar'
 //导入公共组件
 import Scroll from 'components/common/scroll/Scroll'
 import GoodsList from 'components/content/goods/GoodsList'
@@ -54,7 +61,9 @@ export default {
             commentInfo: {},
             recommends: [],
             themeTopYs: [],
-            getThemeTopYs: null
+            getThemeTopYs: null,
+            themeIndex: 0,
+            scrollPositionY: 0
              
         }
     },
@@ -66,6 +75,7 @@ export default {
         DetailGoodsInfo,
         DetailParamInfo,
         DetailCommentInfo,
+        DetailBottomBar,
         Scroll,
         GoodsList
     },
@@ -110,8 +120,19 @@ export default {
         
             this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 500)
         },
-        scroll() {
-
+        contentScroll(position) {
+            this.scrollPositionY = -position.y
+            // const themeLength = this.themeTopYs.length //这里的长度是5
+            for (let i = 0; i< this.themeTopYs.length; i++) {
+                if(this.themeIndex !== i && (this.scrollPositionY > this.themeTopYs[i] && this.scrollPositionY <= this.themeTopYs[i+1])) {
+                    this.themeIndex = i
+                   
+                    this.$refs.navBar.currentIndex = this.themeIndex
+                    console.log(i)
+                   
+                   
+                }
+            }
         }
     },
     created() {
@@ -128,6 +149,7 @@ export default {
             this.themeTopYs.push(this.$refs.param.$el.offsetTop)
             this.themeTopYs.push(this.$refs.comment.$el.offsetTop)
             this.themeTopYs.push(this.$refs.recommend.$el.offsetTop)
+            this.themeTopYs.push(Number.MAX_VALUE)
             console.log(this.themeTopYs)
         }, 100)
 
@@ -150,7 +172,7 @@ export default {
     }
     .detail-wrapper {
         /* 注意calc中的符号左右两边要有空格 */
-        height: calc(100% - 44px);
+        height: calc(100% - 44px - 49px);
         position: relative;
         z-index: 11;
         overflow: hidden;
