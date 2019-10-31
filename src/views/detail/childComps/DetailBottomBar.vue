@@ -17,7 +17,7 @@
           </div>
       </div>
       <div class="bottom-bar-right">
-          <div class="cart">加入购物车</div>
+          <div class="cart" @click="addToCart">加入购物车</div>
           <div class="buy">购买</div>
       </div>
   </div>
@@ -25,7 +25,11 @@
 
 <script>
 export default {
-
+    methods: {
+        addToCart() {
+            this.$emit('addCart')
+        }
+    }
 }
 </script>
 
@@ -37,7 +41,7 @@ export default {
         z-index: 12;
         display: flex;
     }
-    .bottom-bar-left .bottom-bar-right {
+    .bottom-bar-left, .bottom-bar-right {
         flex: 1;
     }
     .bottom-bar-left {
@@ -50,7 +54,7 @@ export default {
         text-align: center;
          
     }
-    .service .shop .collection {
+    .service, .shop, .collection {
          display: block;
          height: 24px;
          width: 24px;
@@ -74,7 +78,7 @@ export default {
         font-size: 16px;
          
     }
-    .cart .buy {
+    .cart, .buy {
         flex: 1;
         text-align: center;
         line-height: 49px;

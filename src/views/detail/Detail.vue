@@ -1,8 +1,9 @@
 <template>
   <div id="detail">
+
       <!-- 顶部导航栏 -->
       <detail-nav-bar @titleTypeClick="titleTypeClick" ref="navBar"/>
-
+         
       <scroll class="detail-wrapper" 
               ref="scroll"
               :probe-type="3" 
@@ -24,7 +25,9 @@
       </scroll>
 
       <!-- 底部导航栏 -->
-      <detail-bottom-bar />
+      <detail-bottom-bar @addCart="addCart"/>
+      <back-top @click.native="backTop" v-show="isShowBackTop"/>
+      
   </div>
 </template>
 
@@ -46,7 +49,7 @@ import {getDetail,getRecommend, Goods, Shop, GoodsParam} from 'network/detail'
 //导入防抖函数
 import {debounce} from 'common/utils'
 //导入混入文件
-import {itemListenerMixin} from 'common/mixin'
+import {itemListenerMixin, BackTopMixin} from 'common/mixin'
 
 export default {
     name: 'Detail',
@@ -79,7 +82,7 @@ export default {
         Scroll,
         GoodsList
     },
-    mixins: [itemListenerMixin],
+    mixins: [itemListenerMixin, BackTopMixin],
     methods: {
         //网络请求函数
         _getDetail() {
@@ -121,6 +124,9 @@ export default {
             this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 500)
         },
         contentScroll(position) {
+            //是否显示回到顶部
+            this.listenBackTop(position)
+            
             this.scrollPositionY = -position.y
             // const themeLength = this.themeTopYs.length //这里的长度是5
             for (let i = 0; i< this.themeTopYs.length; i++) {
@@ -133,6 +139,16 @@ export default {
                    
                 }
             }
+        },
+        addCart() {
+            //将deail中的数据整理，然后放到Vuex中
+            const product = {}
+            product.image = this.topImages[0]
+            product.title = this.goods.title
+            product.desc = this.goods.desc
+            product.realPrice = this.goods.realPrice
+            product.iid = this.iid
+            this.$store.commit('addCart', product)
         }
     },
     created() {

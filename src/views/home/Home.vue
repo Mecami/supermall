@@ -52,7 +52,6 @@
 
   import TabControl from 'components/content/tabControl/TabControl'
   import GoodsList from 'components/content/goods/GoodsList'
-  import BackTop from 'components/content/backTop/BackTop'
   //导入用到的方法
   import {
     getHomeMultidata,
@@ -61,7 +60,7 @@
   //导入防抖动函数
   import {debounce} from 'common/utils'
   //导入混入文件
-  import {itemListenerMixin} from 'common/mixin'
+  import {itemListenerMixin, BackTopMixin} from 'common/mixin'
 
   export default {
     name: 'Home',
@@ -85,7 +84,6 @@
         },
         currentType: "pop",
         goodsTypes: ['pop', 'new', 'sell'],
-        isShowBackTop: false,
         tabOffsetTop: 0,
         isShowTabControl: false,
         
@@ -101,9 +99,9 @@
       TabControl,
       GoodsList,
       Scroll,
-      BackTop
+      
     },
-    mixins: [itemListenerMixin],
+    mixins: [itemListenerMixin, BackTopMixin],
     computed: {
       showGoods() {
         return this.goods[this.currentType].list
@@ -117,19 +115,17 @@
         this.$refs.tabControl1.currentIndex = index
         this.$refs.tabControl2.currentIndex = index
       },
-      backTop() {
-          this.$refs.scroll.scrollTo(0, 0)
-         
-      },
+      
       contentScroll(position) {
         //监听是否显示“返回顶部”
-        this.isShowBackTop = (-position.y) > 1000
+        this.listenBackTop(position)
         //监听tabbarControl是否需要固定定位
         this.isShowTabControl = (-position.y) > this.tabOffsetTop
 
         
         
       },
+     
       loadMore() {
          
         this.getHomeGoods(this.currentType)
@@ -146,7 +142,9 @@
       //网络请求相关方法
       getHomeMultidata() {
         getHomeMultidata().then(res => {
+          console.log(res)
           this.banners = res.data.banner.list
+           
           this.recommends = res.data.recommend.list
         })
       },
