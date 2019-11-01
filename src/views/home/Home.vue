@@ -195,7 +195,7 @@
   }
 </script>
 
-<style>
+<style scoped>
   #home {
     /* margin-top: 44px; */
     position: relative;

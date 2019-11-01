@@ -50,7 +50,7 @@ import {getDetail,getRecommend, Goods, Shop, GoodsParam} from 'network/detail'
 import {debounce} from 'common/utils'
 //导入混入文件
 import {itemListenerMixin, BackTopMixin} from 'common/mixin'
-
+ 
 export default {
     name: 'Detail',
     data() {
@@ -148,7 +148,7 @@ export default {
             product.desc = this.goods.desc
             product.realPrice = this.goods.realPrice
             product.iid = this.iid
-            this.$store.commit('addCart', product)
+            this.$store.dispatch('addCart', product)
         }
     },
     created() {
