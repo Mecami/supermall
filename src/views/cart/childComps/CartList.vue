@@ -2,7 +2,8 @@
   <div class="cart-list">
       <cart-list-item v-for="(item, index) in List" 
                         :key="index" 
-                        :product="item"/>
+                        :product="item"
+                        ref="cartListItem"/>
   </div>
 </template>
 

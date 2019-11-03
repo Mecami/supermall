@@ -5,7 +5,9 @@ import mutations from './mutations'
 import getters from './getters'
 Vue.use(Vuex)
 const state = {
-    cartList: []
+    cartList: [],
+    selectedCount: 0,
+    selectAll: false
 }
 const store = new Vuex.Store({
     state,
