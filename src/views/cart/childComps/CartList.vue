@@ -11,6 +11,7 @@
 import {mapGetters} from 'vuex'
 import CartListItem from './CartListItem'
 export default {
+    name: 'CartList',
     components: {
         CartListItem
     },

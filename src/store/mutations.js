@@ -14,13 +14,5 @@ export default  {
         })
         obj.checked = !obj.checked
     },
-    productIncrease(state) {
-        state.selectedCount ++
-    },
-    changeSelectAll(state) {
-        state.selectAll = !state.selectAll
-    },
-    selectedAll(state) {
-        state.selectAll = true
-    }
+  
   }

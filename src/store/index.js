@@ -6,7 +6,7 @@ import getters from './getters'
 Vue.use(Vuex)
 const state = {
     cartList: [],
-    selectedCount: 0,
+    // selectedCount: this.$store.getters('selectedProdectCount'),
     selectAll: false
 }
 const store = new Vuex.Store({

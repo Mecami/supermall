@@ -1,5 +1,5 @@
 <template>
-  <div class="check-button" :class="{isCheck: isCheck || selectAll}">
+  <div class="check-button" :class="{isCheck: isCheck}">
       <img src="~assets/img/cart/tick.svg" alt="">
   </div>
 </template>
@@ -7,25 +7,25 @@
 <script>
 export default {
     props: {
-        // isCheck: {
-        //     type: Boolean,
-        //     default: true
-        // },
-        product: {
-            type: Object,
-            default() {
-                return {}
-            }
-        },
-        selectAll: {
+        isCheck: {
             type: Boolean,
             default: false
-        }
+        },
+        // product: {
+        //     type: Object,
+        //     default() {
+        //         return {}
+        //     }
+        // },
+        // selectAll: {
+        //     type: Boolean,
+        //     default: false
+        // }
     },
     computed: {
-        isCheck() {
-            return this.product.checked
-        }
+        // isCheck() {
+        //     return this.product.checked
+        // }
     }
 }
 </script>

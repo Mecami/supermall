@@ -8,12 +8,18 @@
             </div>
         </div>
         <h1>我是h1</h1>
+        <button @click="fadeOut" ref="btn">点我</button>
     </div>
 </template>
 
 <script>
 export default {
     
+    methods: {
+        fadeOut() {
+            this.$refs.btn.fadeOut
+        }
+    }
 }
 </script>
 

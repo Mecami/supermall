@@ -1,7 +1,9 @@
 <template>
   <div class="cart-item">
        <div class="check-button">
-           <check-button @click.native="checkClick(product.iid)" :product="product"/>
+           <check-button 
+             @click.native="checkClick(product.iid)" 
+             :is-check="product.checked"/>
        </div>
         
         <div class="item-img">
@@ -25,6 +27,7 @@ import CheckButton from 'components/content/checkButton/CheckButton'
 import {CHANGE_PRODUCT_SELECT} from 'store/mutation-types'
 import {mapGetters} from 'vuex'
 export default {
+    name: 'CartListItem',
     props: {
         product: {
             type: Object,
@@ -37,20 +40,30 @@ export default {
         CheckButton
     },
     computed: {
-        ...mapGetters(['cartList', 'selectAll'])
+        ...mapGetters(['cartList', 'selectAll', 'selectedCount', 'selectedProdectCount'])
     },
     methods: {
         checkClick(iid) {
             // this.product.checked = !this.product.checked
+            //设置checked为true或者false
             this.$store.commit(CHANGE_PRODUCT_SELECT, iid)
             // console.log(iid).
-            if(this.product.checked) {
-                console.log(this.$store.state.selectedCount)
-                this.$store.commit('productIncrease')
-                if(this.selectedCount == this.cartList.length) {
-                    this.$store.commit('selectedAll')
-                }
-            }
+            //设置后再判断
+            // if (this.product.checked) {
+            //     this.$store.commit('productIncrease')
+            //     // console.log(this.$store.state.selectedCount)
+              
+            // } else {
+            //     this.$store.commit('productDecrease')
+            // }
+            // this.product.checked ?  this.$store.commit('productIncrease') : this.$store.commit('productDecrease')
+            // if (this.selectedCount == this.cartList.length) {
+            //       // this.$store.commit('selectedAll')
+            //       console.log('---')
+            //       this.$store.commit('selectedAll')
+            // }
+            // this.$store.commit('selectedAll',  this.selectedProdectCount === this.cartList.length)
+            // this.selectedProdectCount === this.cartList.length ?  this.$store.commit('selectedAll') :  this.$store.commit('selectedAll2')
         }
     }
 }
