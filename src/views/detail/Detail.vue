@@ -50,7 +50,8 @@ import {getDetail,getRecommend, Goods, Shop, GoodsParam} from 'network/detail'
 import {debounce} from 'common/utils'
 //导入混入文件
 import {itemListenerMixin, BackTopMixin} from 'common/mixin'
- 
+//将actions映射到methods中
+import {mapActions, mapGetters} from 'vuex'
 export default {
     name: 'Detail',
     data() {
@@ -84,6 +85,7 @@ export default {
     },
     mixins: [itemListenerMixin, BackTopMixin],
     methods: {
+        ...mapActions({add: 'addCart'}),
         //网络请求函数
         _getDetail() {
             getDetail(this.iid).then(res => {
@@ -148,7 +150,17 @@ export default {
             product.desc = this.goods.desc
             product.realPrice = this.goods.realPrice
             product.iid = this.iid
-            this.$store.dispatch('addCart', product)
+            //1.传统方法 
+            //this.$store.dispatch('addCart', product)
+            //   .then((res) => {
+            //       console.log(res)
+            //     //   this.$toast.show(res, 2000)
+            //   })
+            //2.直接使用actions中的addCart方法
+            this.add(product).then(res => {
+                // console.log(res)
+                this.$toast.show(res)
+            })
         }
     },
     created() {

@@ -1,7 +1,8 @@
 import {ADD_COUNT, ADD_TO_CART} from './mutation-types'
 export default {
     addCart({state, commit}, payload) {
-        //测试find和findIndex方法
+       return new Promise((resolve, reject) => {
+            //测试find和findIndex方法
         // const arr = [2, 4, 8]
         // const res = arr.findIndex(item => item > 3)
         // console.log(res)
@@ -13,12 +14,15 @@ export default {
         if (oldProduct) { 
             // oldProduct.count ++
             commit(ADD_COUNT, oldProduct)
+            resolve('商品数量+1')
         } else {
             payload.count = 1
             // state.cartList.push(payLoad)
             commit(ADD_TO_CART, payload)
+            resolve('添加购物车成功')
         }
         // console.log(state.cartList)
+       })
        
     }
 }
