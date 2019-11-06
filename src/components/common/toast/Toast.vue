@@ -13,7 +13,7 @@ export default {
         }
     },
     methods: {
-        show(message = '默认信息', duration = 2000) {
+        show(message = '默认信息', duration = 1000) {
             console.log('----')
             this.message = message
             this.isShow = true
@@ -30,7 +30,7 @@ export default {
     .toast {
         position: fixed;
         z-index: 999;
-        background-color: rgba(0, 0, 0, .5);
+        background-color: rgba(0, 0, 0, .7);
         color: #fff;
 
         border-radius: 6px;
